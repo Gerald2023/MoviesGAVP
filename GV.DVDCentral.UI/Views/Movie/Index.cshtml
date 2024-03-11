@@ -1,0 +1,43 @@
+﻿@model IEnumerable<GV.DVDCentral.BL.Models.Movie>
+
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="row mt-2">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-4">
+            <div class="card mb-2">
+                <img src="~/images/@item.ImagePath" class="card-img-top" alt="@item.Title">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                    <p class="card-text">
+                        <strong>Cost:</strong> @Html.DisplayFor(modelItem => item.Cost) <br />
+                        <strong>In Stock:</strong> @Html.DisplayFor(modelItem => item.InStkQty) <br />
+                        <strong>Director:</strong> @Html.DisplayFor(modelItem => item.DirectorFullName) <br />
+                        <strong>Rating:</strong> @Html.DisplayFor(modelItem => item.Rating) <br />
+                        <strong>Format:</strong> @Html.DisplayFor(modelItem => item.Format)
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-sm btn-primary" asp-route-id="@item.Id" asp-action="Edit">Edit</a>
+                    <a class="btn btn-sm btn-primary" asp-route-id="@item.Id" asp-action="Details">Details</a>
+                    <a class="btn btn-sm btn-primary" asp-route-id="@item.Id" asp-action="Delete">Delete</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript" class="init">
+    $.noConflict();
+    jQuery(document).ready(function ($) {
+        $('#myData').DataTable({
+            "lengthMenu": [[5, 10, 25, 30, -1], [5, 10, 25, 30, "All"]]
+        });
+    });
+</script>

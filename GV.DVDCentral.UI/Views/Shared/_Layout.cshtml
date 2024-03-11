@@ -1,0 +1,158 @@
+﻿@using GV.DVDCentral.UI.Extensions;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Movies</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/GV.DVDCentral.UI.styles.css" asp-append-version="true" />
+
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark  border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">DVD Central</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Rating" asp-action="Index">Rating</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Genre" asp-action="Index">Genres</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Director" asp-action="Index">Directors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Format" asp-action="Index">Formats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Movie" asp-action="Index">Movies</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Order" asp-action="Index">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                        </li>
+                    </ul>
+
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            @{
+                                GV.DVDCentral.BL.UserManager.Seed();
+                                var fullname = HttpContextAccessor.HttpContext?.Session.GetString("fullname");
+                                if (fullname != null) fullname = fullname.Replace("\"", "");
+                            }
+                            <a class="nav-link text-light">@fullname</a>
+                        </li>
+                    </ul>
+
+                    <div class="userDropDown navbar-nav ms-auto">
+                        <div class="nav-item dropdown">
+                            <a class="text-light btn btn-secondary dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Let's Get Started
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+
+                                <li class="nav-item">
+                                    @if (HttpContextAccessor.HttpContext?.Session.GetObject<User>("user") != null)
+                                    {
+                                        <a asp-controller="User" asp-action="Logout" class="dropdown-item nav-link ">Log out</a>
+                                        <a asp-controller="User" asp-action="Browse2" class="dropdown-item nav-link">My user information</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="User" asp-action="Login" class="dropdown-item nav-link ">Login</a>
+                                    }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-md-2 sidebar rounded-top">
+                <div class="header rounded-top p-2">
+                    <h4>Genres</h4>
+                </div>
+                <div>
+                    @await Component.InvokeAsync("Sidebar")
+                </div>
+
+            </div>
+            <div id="overlay" onclick="off()">
+                <div id="imageproplarge">
+                    <img class="imageproplarge" id="output" />
+                </div>
+            </div>
+
+            <div class="col-md-9 main body-content rounded-top">
+                <div class="header rounded-top p-2">
+                    <h4>@ViewBag.Title</h4>
+                </div>
+                <main role="main" class="pb-3">
+                    <div class="text-danger">@ViewBag.Error</div>
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - GV.DVDCentral.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+<script type="text/javascript">
+    function off() {
+        console.log('Off');
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    function on(picture) {
+        console.log('On');
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("output").src = picture;
+    }
+</script>
